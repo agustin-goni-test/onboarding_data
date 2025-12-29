@@ -4,7 +4,8 @@ from contextlib import asynccontextmanager
 from logger import setup_logging, get_logger
 from routers import onboarding_data_router
 from infrastructure.db_validation.registration_contract import validate_registration_insert_contract
-from application.data.models import CommerceRegistrationORM
+from infrastructure.db_validation.contact_contract import validate_contact_insert_contract
+from application.data.models import CommerceRegistrationORM, ContactInfoORM
 from application.data.db import engine
 import sys
 
@@ -94,6 +95,11 @@ def run_startup_validations():
         validate_registration_insert_contract(
             engine=engine,
             orm_model=CommerceRegistrationORM
+        )
+
+        validate_contact_insert_contract(
+            engine=engine,
+            orm_model=ContactInfoORM
         )
     except Exception as e:
         logger.critical(f"Startup validation failed: {str(e)}")

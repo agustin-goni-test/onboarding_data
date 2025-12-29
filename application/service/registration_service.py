@@ -1,4 +1,4 @@
-from application.domain.registration import CommerceRegistration
+from application.domain.entities import CommerceRegistration
 from application.data.unit_of_work import UnitOfWork
 
 class RegistrationService:

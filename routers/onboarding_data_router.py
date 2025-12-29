@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from routers.requests import RegistrationRequest
+from routers.requests import RegistrationRequest, ContactRequest
 from application.service.registration_service import RegistrationService
+from application.service.contact_service import ContactService
 from application.data.unit_of_work import UnitOfWork
 from logger import setup_logging, get_logger
 import json
@@ -37,6 +38,29 @@ async def create_registration(data: RegistrationRequest):
         phone=data.phone
     )
     
-    
     logger.info("Data registered successfully")
     return JSONResponse(content={"message": "Data registered successfully"})
+
+
+@router.post("/contact", response_class=JSONResponse)
+async def create_contact(data: ContactRequest):
+    '''
+    Endpoint to submit contact information
+    
+    :param data: Description
+    :type data: ContactRequest
+    '''
+    logger.info("Contact endpoint called.")
+    logger.debug(f"Received contact data: {data.model_dump()}")
+
+    # Add logic to handle contact data here
+    service = ContactService(uow=UnitOfWork())
+    service.create_contact(
+        rut=data.rut,
+        nombres=data.nombres,
+        apellidos=data.apellidos,
+        serial_number=data.serial_number
+    )
+
+    logger.info("Contact data processed successfully.")
+    return JSONResponse(content={"message": "Contact data processed successfully"})

@@ -1,9 +1,10 @@
 from application.data.db import SessionLocal
-from application.data.repository import CommerceRegistrationRepository
+from application.data.repository import CommerceRegistrationRepository, ContactInfoRepository
 
 class UnitOfWork:
     def __init__(self):
         self.db_session = SessionLocal()
+        self.contacts = ContactInfoRepository(self.db_session)
         self.commerce_registrations = CommerceRegistrationRepository(self.db_session)
 
     def __enter__(self):

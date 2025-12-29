@@ -26,12 +26,13 @@ def check_service_status():
     except Exception as e:
         logger.error(f"Error while checking service status: {str(e)}") 
 
+
 def send_registration_data(rut: str, email: str, phone: str):
     '''
     Method to send registration data to the service
     '''
 
-    # Sample data to register
+    # Data to send
     data = {
         "rut": rut,
         "email": email,
@@ -51,7 +52,38 @@ def send_registration_data(rut: str, email: str, phone: str):
         else:
             logger.error(f"Failed to register data, status code: {response.status_code}")
     except Exception as e:
-        logger.error(f"Error while sending registration data: {str(e)}")    
+        logger.error(f"Error while sending registration data: {str(e)}")
+
+
+def send_contact_data(
+        rut: str,
+        nombres: str,
+        apellidos: str,
+        serial_number: str
+):
+    '''
+    Method to send contact data to the service
+    '''
+    # Data to send
+    data = {
+        "rut": rut,
+        "nombres": nombres,
+        "apellidos": apellidos,
+        "serial_number": serial_number
+    }
+
+    url_contact = "http://127.0.0.1:8000/onboarding-data/contact"
+
+    logger.info(f"Sending contact data to {url_contact}")
+
+    try:
+        response = requests.post(url_contact, json=data)
+        if response.status_code == 200:
+            logger.info(f"Contact data sent successfully: {response.json()}")
+        else:
+            logger.error(f"Failed to send contact data, status code: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Error while sending contact data: {str(e)}")
 
 
 if __name__ == "__main__":
@@ -75,10 +107,21 @@ if __name__ == "__main__":
         help="Send registration data to the onboarding data service"
         )
     
-    # Parse the parameters
+    contact_parser = subparsers.add_parser(
+        "contact",
+        help="Send contact data to the onboarding data service"
+        )
+    
+    # Parse the parameters for registration
     regsiter_parser.add_argument("--rut", type=str, help="RUT of the commerce", required=True)
     regsiter_parser.add_argument("--email", type=str, help="Email of the commerce", required=True)
     regsiter_parser.add_argument("--phone", type=str, help="Phone number of the commerce", required=True)
+
+    # Parse the parameters for contact
+    contact_parser.add_argument("--rut", type=str, help="RUT of the contact", required=True)
+    contact_parser.add_argument("--nombres", type=str, help="First names of the contact", required=True)
+    contact_parser.add_argument("--apellidos", type=str, help="Last names of the contact", required=True)
+    contact_parser.add_argument("--serial_number", type=str, help="Serial number of the contact", required=True)
 
     args = parser.parse_args()
 
@@ -92,4 +135,13 @@ if __name__ == "__main__":
             rut=args.rut,
             email=args.email,
             phone=args.phone
+        )
+
+    # Else, if contact
+    elif args.command == "contact":
+        send_contact_data(
+            rut=args.rut,
+            nombres=args.nombres,
+            apellidos=args.apellidos,
+            serial_number=args.serial_number
         )
