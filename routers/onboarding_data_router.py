@@ -30,12 +30,12 @@ async def create_registration(data: RegistrationRequest):
     logger.debug(f"Received data for registration: {data.model_dump()}")
     
     # Create registration service and send registration with Unit of Work
-    # service = RegistrationService(uow=UnitOfWork())
-    # service.register_commerce(
-    #     rut=data.rut,
-    #     email=data.email,
-    #     phone=data.phone
-    # )
+    service = RegistrationService(uow=UnitOfWork())
+    service.register_commerce(
+        rut=data.rut,
+        email=data.email,
+        phone=data.phone
+    )
     
     
     logger.info("Data registered successfully")

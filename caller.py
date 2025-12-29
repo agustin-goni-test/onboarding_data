@@ -1,4 +1,5 @@
 import requests
+import argparse
 import os
 from logger import setup_logging, get_logger
 
@@ -25,16 +26,16 @@ def check_service_status():
     except Exception as e:
         logger.error(f"Error while checking service status: {str(e)}") 
 
-def send_registration_data():
+def send_registration_data(rut: str, email: str, phone: str):
     '''
     Method to send registration data to the service
     '''
 
     # Sample data to register
     data = {
-        "rut": "12345678-9",
-        "email": "prueba@prueba.cl",
-        "phone": "+56912345678",
+        "rut": rut,
+        "email": email,
+        "phone": phone,
     }
 
     # URL of the registration endpoint
@@ -54,5 +55,41 @@ def send_registration_data():
 
 
 if __name__ == "__main__":
-    # check_service_status()
-    send_registration_data()
+
+    # Parse arguments in the call
+    parser = argparse.ArgumentParser(
+        description="Caller for Onboarding Data Service"
+        )
+    
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Option check health
+    subparsers.add_parser(
+        "check",
+        help="Check the status of the onboarding data service"
+        )
+    
+    # Option send registration data (with parameters)
+    regsiter_parser = subparsers.add_parser(
+        "register",
+        help="Send registration data to the onboarding data service"
+        )
+    
+    # Parse the parameters
+    regsiter_parser.add_argument("--rut", type=str, help="RUT of the commerce", required=True)
+    regsiter_parser.add_argument("--email", type=str, help="Email of the commerce", required=True)
+    regsiter_parser.add_argument("--phone", type=str, help="Phone number of the commerce", required=True)
+
+    args = parser.parse_args()
+
+    # If health check
+    if args.command == "check":
+        check_service_status()
+    
+    # Else, if registration
+    elif args.command == "register":
+        send_registration_data(
+            rut=args.rut,
+            email=args.email,
+            phone=args.phone
+        )
