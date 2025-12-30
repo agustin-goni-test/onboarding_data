@@ -76,14 +76,6 @@ async def log_requests(request, call_next):
         logger.error(f"Error processing request: {str(e)}")
         raise
 
-# @app.on_event("startup")
-# async def startup_event():
-#     logger.info("Starting up the Inference API application.")
-
-# @app.on_event("shutdown")
-# async def shutdown_event():
-#     logger.info("Shutting down the Inference API application")
-
 # -------------------------------------------------------------------
 # Validations to be run at startup time
 # -------------------------------------------------------------------
