@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS onboarding.registro_comercio (
     phone   TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS onboarding.contact (
+CREATE TABLE IF NOT EXISTS onboarding.contacto (
     id      BIGSERIAL PRIMARY KEY,
     rut     TEXT NOT NULL,
     nombres TEXT NOT NULL,
@@ -29,8 +29,9 @@ CREATE TABLE IF NOT EXISTS onboarding.comercio_contacto (
     comercio_id     BIGINT NOT NULL,
     contact_id      BIGINT NOT NULL,
     rol             TEXT NOT NULL,
-    principal       BOOLEAN DEFAULT FALSE,
-    created_at      TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    principal       BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (comercio_id, contact_id, rol),
 
     CONSTRAINT fk_comercio
@@ -40,7 +41,7 @@ CREATE TABLE IF NOT EXISTS onboarding.comercio_contacto (
 
     CONSTRAINT fk_contact
         FOREIGN KEY(contact_id)
-            REFERENCES onboarding.contact(id)
+            REFERENCES onboarding.contacto(id)
             ON DELETE CASCADE
 );
 

@@ -1,10 +1,47 @@
 from sqlalchemy.orm import Session
-from application.data.models import CommerceRegistrationORM, ContactInfoORM
-from application.domain.entities import CommerceRegistration, ContactInfo
+from application.data.models import CommerceRegistrationORM, ContactInfoORM, CommerceContactORM
+from application.domain.entities import CommerceRegistration, ContactInfo, CommerceContact
 
 class CommerceRegistrationRepository:
     def __init__(self, db_session: Session):
         self.db_session = db_session
+
+    def get_id_by_rut(self, rut: str) -> int:
+        '''
+        Return the id of the regsistration with the given RUT
+        or raise ValueError if not found.
+        '''
+        comercio_id = (
+            self.db_session.query(CommerceRegistrationORM.id)
+            .filter(CommerceRegistrationORM.rut == rut)
+            .scalar()
+        )
+
+        # If not found, raise an error
+        if comercio_id is None:
+            raise ValueError(f"Commerce with RUT '{rut}' not found.")
+        
+        # REturn the found id
+        return comercio_id
+    
+    def get_registration_by_rut(self, rut: str) -> CommerceRegistration:
+        orm_registration = (
+            self.db_session.query(CommerceRegistrationORM)
+            .filter(CommerceRegistrationORM.rut == rut)
+            .one_or_none()
+        )
+
+        # If not found, raise an error
+        if orm_registration is None:
+            raise ValueError(f"Commerce with RUT '{rut}' not found.")
+        
+        # Return registration entity
+        return CommerceRegistration(
+            rut=orm_registration.rut,
+            email=orm_registration.email,
+            phone=orm_registration.phone
+        )
+
 
     def add(self, registration: CommerceRegistration) -> None:
         orm_registration = CommerceRegistrationORM(
@@ -19,7 +56,7 @@ class ContactInfoRepository:
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    def add(self, contact_info: ContactInfo) -> None:
+    def add(self, contact_info: ContactInfo) -> int:
         orm_contact_info = ContactInfoORM(
             rut=contact_info.rut,
             nombres=contact_info.nombres,
@@ -28,3 +65,22 @@ class ContactInfoRepository:
         )
         self.db_session.add(orm_contact_info)
         self.db_session.flush()
+
+        return orm_contact_info.id
+
+
+class CommerceContactRepository:
+    def __init__(self, db_session: Session):
+        self.db_session = db_session
+
+    def add(self, contacto_com: CommerceContact) -> None:
+        orm_contacto = CommerceContactORM(
+            comercio_id=contacto_com.comercio_id,
+            contact_id=contacto_com.contact_id,
+            rol=contacto_com.rol,
+            principal=contacto_com.principal
+        )
+        self.db_session.add(orm_contacto)
+
+
+

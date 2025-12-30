@@ -86,6 +86,41 @@ def send_contact_data(
         logger.error(f"Error while sending contact data: {str(e)}")
 
 
+def send_representative_data(
+        rut_comercio: str,
+        rut: str,
+        nombres: str,
+        apellidos: str,
+        serial_number: str
+):
+    '''
+    Method to send representative contact data to the service
+    '''
+    # Data to send
+    data = {
+        "rut_comercio": rut_comercio,
+        "rut": rut,
+        "nombres": nombres,
+        "apellidos": apellidos,
+        "serial_number": serial_number,
+        "principal": True
+    }
+
+    url_representative_contact = "http://127.0.0.1:8000/onboarding-data/representative"
+
+    logger.info(f"Sending representative contact data to {url_representative_contact}")
+
+    try:
+        response = requests.post(url_representative_contact, json=data)
+        if response.status_code == 200:
+            logger.info(f"Representative contact data sent successfully: {response.json()}")
+        else:
+            logger.error(f"Failed to send representative contact data, status code: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Error while sending representative contact data: {str(e)}")
+
+
+
 if __name__ == "__main__":
 
     # Parse arguments in the call
@@ -112,6 +147,11 @@ if __name__ == "__main__":
         help="Send contact data to the onboarding data service"
         )
     
+    representative_parser = subparsers.add_parser(
+        "representative",
+        help="Send representative contact data to the onboarding data service"
+        )
+    
     # Parse the parameters for registration
     regsiter_parser.add_argument("--rut", type=str, help="RUT of the commerce", required=True)
     regsiter_parser.add_argument("--email", type=str, help="Email of the commerce", required=True)
@@ -122,6 +162,13 @@ if __name__ == "__main__":
     contact_parser.add_argument("--nombres", type=str, help="First names of the contact", required=True)
     contact_parser.add_argument("--apellidos", type=str, help="Last names of the contact", required=True)
     contact_parser.add_argument("--serial_number", type=str, help="Serial number of the contact", required=True)
+
+    # Parse the parameters for representative contact
+    representative_parser.add_argument("--rut_comercio", type=str, help="RUT of the commerce", required=True)
+    representative_parser.add_argument("--rut", type=str, help="RUT of the representative contact", required=True)
+    representative_parser.add_argument("--nombres", type=str, help="First names of the representative contact", required=True)
+    representative_parser.add_argument("--apellidos", type=str, help="Last names of the representative contact", required=True)
+    representative_parser.add_argument("--serial_number", type=str, help="Serial number of the representative contact", required=True)
 
     args = parser.parse_args()
 
@@ -140,6 +187,16 @@ if __name__ == "__main__":
     # Else, if contact
     elif args.command == "contact":
         send_contact_data(
+            rut=args.rut,
+            nombres=args.nombres,
+            apellidos=args.apellidos,
+            serial_number=args.serial_number
+        )
+
+    # Else, if representative contact
+    elif args.command == "representative":
+        send_representative_data(
+            rut_comercio=args.rut_comercio,
             rut=args.rut,
             nombres=args.nombres,
             apellidos=args.apellidos,

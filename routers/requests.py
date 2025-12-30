@@ -11,3 +11,12 @@ class ContactRequest(BaseModel):
     nombres: str
     apellidos: str
     serial_number: str
+
+
+class RepresentativeRequest(BaseModel):
+    rut_comercio: str
+    rut: str
+    nombres: str
+    apellidos: str
+    serial_number: str
+    principal: bool

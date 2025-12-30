@@ -23,3 +23,17 @@ class ContactInfo:
         self.nombres = nombres
         self.apellidos = apellidos
         self.serial_number = serial_number
+        
+
+@dataclass
+class CommerceContact:
+    comercio_id: int
+    contact_id: int
+    rol: str
+    principal: bool
+
+    def __init__(self, comercio_id, contact_id, rol, principal):
+        self.comercio_id = comercio_id
+        self.contact_id = contact_id
+        self.rol = rol
+        self.principal = principal
