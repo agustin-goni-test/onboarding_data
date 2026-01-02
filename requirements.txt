@@ -4,3 +4,4 @@ uvicorn
 requests
 sqlalchemy
 psycopg2-binary
+httpx

@@ -27,6 +27,25 @@ def check_service_status():
         logger.error(f"Error while checking service status: {str(e)}") 
 
 
+def check_service_status_extras():
+    '''
+    Method to check service status
+    '''
+
+    # URL of the status endpoint
+    url_status = "http://127.0.0.1:8000/onboarding-extras/status"
+
+    logger.info(f"Checking service status at {url_status}")
+    try:
+        response = requests.get(url_status)
+        if response.status_code == 200:
+            logger.info(f"Service is up and running: {response.json()}")
+        else:
+            logger.error(f"Service returned unexpected status code: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Error while checking service status: {str(e)}")
+
+
 def send_registration_data(rut: str, email: str, phone: str):
     '''
     Method to send registration data to the service
@@ -202,6 +221,22 @@ def send_account_for_commerce_data(
         logger.error(f"Error while sending account data: {str(e)}")
 
 
+def send_account_type_synch():
+    
+    url_synch = "http://127.0.0.1:8000/onboarding-extras/accounts"
+
+    logger.info(f"Sending account data to {url_synch}")
+
+    try:
+        response = requests.post(url_synch)
+        if response.status_code == 200:
+            logger.info(f"Account types synchronized successfully: {response.json()}")
+        else:
+            logger.error(f"Failed to synchronize account types, status code: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Error while synchronizing account types: {str(e)}")
+
+
 
 if __name__ == "__main__":
 
@@ -242,6 +277,11 @@ if __name__ == "__main__":
     commerce_account_parser = subparsers.add_parser(
         "commerce-account",
         help="Send account data to be linked to a specific commerce"
+    )
+
+    account_synch_parser = subparsers.add_parser(
+        "account-synch",
+        help="Synchronize the account type data"
     )
     
     # Parse the parameters for registration
@@ -324,3 +364,8 @@ if __name__ == "__main__":
             banco=args.banco,
             tipo_cuenta=args.tipo_cuenta
         )
+
+    # Else, if account type synchronization
+    elif args.command == "account-synch":
+        send_account_type_synch()
+        # check_service_status_extras()

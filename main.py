@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from logger import setup_logging, get_logger
-from routers import onboarding_data_router
+from routers import onboarding_data_router, onboarding_extras_router
 from infrastructure.db_validation.registration_contract import validate_registration_insert_contract
 from infrastructure.db_validation.contact_contract import validate_contact_insert_contract
 from infrastructure.db_validation.generic_contract import validate_generic_contract
@@ -35,6 +35,9 @@ async def lifespan(app: FastAPI):
     # Startup actions
     logger.info("Application startup: Onboarding Data Service")
 
+    # Check status of routers
+
+
     # Validate database schema and tables
     run_startup_validations()
 
@@ -61,6 +64,7 @@ app = FastAPI(
 # Create router(s) and include in app
 # -------------------------------------------------------------------
 app.include_router(onboarding_data_router.router)
+app.include_router(onboarding_extras_router.router)
 
 # -------------------------------------------------------------------
 # Create middleware for logging
@@ -76,6 +80,17 @@ async def log_requests(request, call_next):
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
         raise
+
+# -------------------------------------------------------------------
+# Check status of routers
+# -------------------------------------------------------------------
+
+def run_routers_status_check():
+    '''
+    Make sure the routers are up and running
+    '''
+    
+
 
 # -------------------------------------------------------------------
 # Validations to be run at startup time
