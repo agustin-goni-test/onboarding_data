@@ -7,7 +7,7 @@ BEGIN;
 -- 1. Create schema
 CREATE SCHEMA IF NOT EXISTS onboarding;
 
--- 2. Create table
+-- 2. Create tables 
 CREATE TABLE IF NOT EXISTS onboarding.registro_comercio (
     id      BIGSERIAL PRIMARY KEY,
     rut     TEXT NOT NULL UNIQUE,
@@ -45,4 +45,35 @@ CREATE TABLE IF NOT EXISTS onboarding.comercio_contacto (
             ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS onboarding.cuenta (
+    id              BIGSERIAL PRIMARY KEY,
+    rut_titular     TEXT NOT NULL,
+    nombre_titular  TEXT NOT NULL,
+    banco           INT NOT NULL,
+    tipo_cuenta     INT NOT NULL,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS onboarding.cuenta_comercio (
+    comercio_id     BIGINT NOT NULL,
+    cuenta_id       BIGINT NOT NULL,
+    principal       BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (comercio_id, cuenta_id)
+
+    CONSTRAINT fk_commerce
+        FOREIGN KEY (comercio_id)
+            REFERENCES (onboarding.registro_comercio(id))
+            ON DELETE CASCADE
+
+    CONSTRAINT fk_cuenta
+        FOREIGN KEY (cuenta_id)
+            REFERENCES (onboarding.cuenta(id))
+            ON DELETE CASCADE
+)
+
 COMMIT;
+

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from application.data.models import CommerceRegistrationORM, ContactInfoORM, CommerceContactORM
-from application.domain.entities import CommerceRegistration, ContactInfo, CommerceContact
+from application.data.models import CommerceRegistrationORM, ContactInfoORM, CommerceContactORM, AccountInfoORM, CommerceAccountORM
+from application.domain.entities import CommerceRegistration, ContactInfo, CommerceContact, AccountInfo, CommerceAccount
 
 class CommerceRegistrationRepository:
     def __init__(self, db_session: Session):
@@ -81,6 +81,36 @@ class CommerceContactRepository:
             principal=contacto_com.principal
         )
         self.db_session.add(orm_contacto)
+
+
+class AccountInfoRepository:
+    def __init__(self, db_session: Session):
+        self.db_session = db_session
+
+    def add(self, cuenta_info: AccountInfo) -> int:
+        orm_cuenta = AccountInfoORM(
+            rut_titular=cuenta_info.rut_titular,
+            nombre_titular=cuenta_info.nombre_titular,
+            banco=cuenta_info.banco,
+            tipo_cuenta=cuenta_info.tipo_cuenta
+        )
+        self.db_session.add(orm_cuenta)
+        self.db_session.flush()
+
+        return orm_cuenta.id
+
+
+class CommerceAccountRepository:
+    def __init__(self, db_session: Session):
+        self.db_session = db_session
+
+    def add(self, cuenta_com: CommerceAccount):
+        orm_cuenta = CommerceAccountORM(
+            comercio_id=cuenta_com.comercio_id,
+            cuenta_id=cuenta_com.cuenta_id,
+            principal=cuenta_com.principal
+        )
+        self.db_session.add(orm_cuenta)
 
 
 

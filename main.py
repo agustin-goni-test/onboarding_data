@@ -7,6 +7,7 @@ from infrastructure.db_validation.registration_contract import validate_registra
 from infrastructure.db_validation.contact_contract import validate_contact_insert_contract
 from infrastructure.db_validation.generic_contract import validate_generic_contract
 from application.data.models import CommerceRegistrationORM, ContactInfoORM, CommerceContactORM
+from application.data.models import AccountInfoORM, CommerceAccountORM
 from application.data.db import engine
 import sys
 
@@ -98,6 +99,16 @@ def run_startup_validations():
         validate_generic_contract(
             engine=engine,
             orm_model=CommerceContactORM
+        )
+
+        validate_generic_contract (
+            engine=engine,
+            orm_model=AccountInfoORM
+        )
+
+        validate_generic_contract (
+            engine=engine,
+            orm_model=CommerceAccountORM
         )
 
     except Exception as e:

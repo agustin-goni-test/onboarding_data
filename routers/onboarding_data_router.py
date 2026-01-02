@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
-from routers.requests import RegistrationRequest, ContactRequest, RepresentativeRequest
+from routers.requests import RegistrationRequest, ContactRequest, RepresentativeRequest, AccountRequest, CommerceAccountRequest
 from application.service.registration_service import RegistrationService
 from application.service.contact_service import ContactService, CommerceContactService
+from application.service.account_service import AccountService, CommerceAccountService
 from application.data.unit_of_work import UnitOfWork
 from logger import setup_logging, get_logger
 import json
@@ -91,3 +92,52 @@ async def create_representative(data: RepresentativeRequest):
 
     logger.info("Representative contact data processed successfully.")
     return JSONResponse(content={"message": "Successfully processed representative contact data"})
+
+
+@router.post("/account", response_class=JSONResponse)
+async def create_account(data: AccountRequest):
+    '''
+    Endpoint to submit account information
+    
+    :param data: Description
+    :type data: AccountRequest
+    '''
+    logger.info("Account creation endpoint called.")
+    logger.debug(f"Received account data: {data.model_dump()}")
+
+    # Logic to handle account creation
+    service = AccountService(uow=UnitOfWork())
+    service.create_account(
+        rut_titular=data.rut_titular,
+        nombre_titular=data.nombre_titular,
+        banco=data.banco,
+        tipo_cuenta=data.tipo_cuenta
+    )
+
+    logger.info("Account processed successfully.")
+    return JSONResponse(content={"message": "Successfully processed account data."})
+
+
+@router.post("/commerce-account", response_class=JSONResponse)
+async def create_account_for_commerce(data: CommerceAccountRequest):
+    '''
+    Docstring for create_account_for_commerce
+    
+    :param data: Description
+    :type data: CommerceAccountRequest
+    '''
+    logger.info("Account for commerce creation endpoint called.")
+    logger.debug(f"Received account data: {data.model_dump()}")
+
+    # Insert logic
+    service = CommerceAccountService(uow=UnitOfWork())
+    service.create_account_for_commerce(
+        rut_comercio=data.rut_comercio,
+        rut_titular=data.rut_titular,
+        nombre_titular=data.nombre_titular,
+        banco=data.banco,
+        tipo_cuenta=data.tipo_cuenta
+    )
+
+    logger.info("Account processed successfully.")
+    return JSONResponse(content={"message": "Successfully processed account data."})

@@ -20,3 +20,20 @@ class RepresentativeRequest(BaseModel):
     apellidos: str
     serial_number: str
     principal: bool
+
+
+class AccountRequest(BaseModel):
+    rut_titular: str
+    nombre_titular: str
+    banco: int
+    tipo_cuenta: int
+
+
+
+class CommerceAccountRequest(BaseModel):
+    rut_comercio: str
+    rut_titular: str
+    nombre_titular: str
+    banco: int
+    tipo_cuenta: int
+
