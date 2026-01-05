@@ -1,6 +1,6 @@
 from application.data.db import SessionLocal
 from application.data.repository import CommerceRegistrationRepository, ContactInfoRepository, CommerceContactRepository, AccountInfoRepository, CommerceAccountRepository
-from application.data.extras.repository import AccountReferenceRepository
+from application.data.extras.repository import AccountReferenceRepository, BankReferenceRepository
 
 class UnitOfWork:
     def __init__(self):
@@ -11,7 +11,9 @@ class UnitOfWork:
         self.accounts = AccountInfoRepository(self.db_session)
         self.commerce_accounts = CommerceAccountRepository(self.db_session)
 
+        # Used for "extras" -- synchronization parameters
         self.account_references = AccountReferenceRepository(self.db_session)
+        self.bank_references = BankReferenceRepository(self.db_session)
 
     def __enter__(self):
         return self

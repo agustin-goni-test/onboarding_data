@@ -25,7 +25,7 @@ class AccountTypeSyncService:
                 "codigo_tipo": acc_type.code,
                 "tipo_cuenta": acc_type.name,
             }
-            for acc_type in response.accountTypes
+            for acc_type in response.account_types
         }
 
         with self.uow as uow:
@@ -48,3 +48,6 @@ class AccountTypeSyncService:
             "inserted": len(to_insert),
             "skipped": len(incoming) - len(to_insert)
         }
+
+
+

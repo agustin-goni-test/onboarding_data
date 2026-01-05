@@ -237,6 +237,21 @@ def send_account_type_synch():
         logger.error(f"Error while synchronizing account types: {str(e)}")
 
 
+def send_bank_type_synch():
+    
+    url_synch = "http://127.0.0.1:8000/onboarding-extras/banks"
+
+    logger.info(f"Sending account data to {url_synch}")
+
+    try:
+        response = requests.post(url_synch)
+        if response.status_code == 200:
+            logger.info(f"Account types synchronized successfully: {response.json()}")
+        else:
+            logger.error(f"Failed to synchronize account types, status code: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Error while synchronizing account types: {str(e)}")
+
 
 if __name__ == "__main__":
 
@@ -282,6 +297,11 @@ if __name__ == "__main__":
     account_synch_parser = subparsers.add_parser(
         "account-synch",
         help="Synchronize the account type data"
+    )
+
+    bank_synch_parser = subparsers.add_parser(
+        "bank-synch",
+        help="Synchronize the bank code type data"
     )
     
     # Parse the parameters for registration
@@ -369,3 +389,6 @@ if __name__ == "__main__":
     elif args.command == "account-synch":
         send_account_type_synch()
         # check_service_status_extras()
+
+    elif args.command == "bank-synch":
+        send_bank_type_synch()

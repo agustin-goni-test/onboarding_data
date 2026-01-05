@@ -9,3 +9,15 @@ class CuentaORM(Base):
     tipo_cuenta: Mapped[str] = mapped_column(nullable=False)
     codigo_tipo: Mapped[int] = mapped_column(nullable=False, unique=True)
 
+
+
+class BancoORM(Base):
+    __tablename__ = "bancos"
+    __table_args__ = {"schema": "onboarding_extras"}
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    nombre_banco: Mapped[str] = mapped_column(nullable=False)
+    codigo_banco: Mapped[int] = mapped_column(nullable=False, unique=True)
+
+
+
