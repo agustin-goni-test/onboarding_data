@@ -101,3 +101,23 @@ class SynchClient:
 
         # Return information in appropriate response type
         return BankCodeResponse(**response.json())
+
+
+
+    def get_codes(self, endpoint: str, response_model):
+
+        # Add authorization header
+        headers = {}
+        if not self.token:
+            raise Exception("No token provided for authorization.")
+        
+        headers = {"Authorization": f"Bearer {self.token}"}
+        
+        url = self.base_url + endpoint
+
+        response = httpx.get(url, headers=headers)
+        response.raise_for_status()
+
+        logger.info("Successfully retrieved reference data from %s", endpoint)
+        return response_model(**response.json())
+

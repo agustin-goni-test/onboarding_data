@@ -8,7 +8,7 @@ class BankCodeSyncService:
         self.client = client
         self.uow = uow
 
-    def synch(self) -> dict:
+    def synch(self, endpoint: str) -> dict:
         '''
         Used to synchronize information between the service and the database.
         Handles bank codes.
