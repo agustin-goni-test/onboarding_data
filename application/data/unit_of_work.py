@@ -1,6 +1,7 @@
 from application.data.db import SessionLocal
 from application.data.repository import CommerceRegistrationRepository, ContactInfoRepository, CommerceContactRepository, AccountInfoRepository, CommerceAccountRepository
-from application.data.extras.repository import AccountReferenceRepository, BankReferenceRepository
+from application.data.extras.repository import AccountReferenceRepository, BankReferenceRepository, ReferenceRepository
+from application.data.extras.models import CuentaORM, BancoORM, RegionORM
 
 class UnitOfWork:
     def __init__(self):
@@ -15,6 +16,8 @@ class UnitOfWork:
         self.account_references = AccountReferenceRepository(self.db_session)
         self.bank_references = BankReferenceRepository(self.db_session)
 
+        self.references = ReferenceRepositories(self.db_session)
+
     def __enter__(self):
         return self
 
@@ -24,3 +27,24 @@ class UnitOfWork:
         else:
             self.db_session.commit()
         self.db_session.close()
+
+
+class ReferenceRepositories:
+    def __init__(self, db_session):
+        self.account_references = ReferenceRepository(
+            db_session=db_session,
+            model=CuentaORM,
+            code_column=CuentaORM.codigo_tipo
+        )
+
+        self.bank_references = ReferenceRepository(
+            db_session=db_session,
+            model=BancoORM,
+            code_column=BancoORM.codigo_banco
+        )
+
+        self.region_references = ReferenceRepository(
+            db_session=db_session,
+            model=RegionORM,
+            code_column=RegionORM.codigo_region
+        )

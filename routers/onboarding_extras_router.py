@@ -2,8 +2,8 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from application.service.extras.services import ReferenceSyncService
 from clients.reference_clients import SynchClient
-from clients.responses import AccountTypeResponse, BankCodeResponse
-from application.data.extras.models import CuentaORM, BancoORM
+from clients.responses import AccountTypeResponse, BankCodeResponse, RegionCodeResponse
+from application.data.extras.models import CuentaORM, BancoORM, RegionORM
 from application.data.unit_of_work import UnitOfWork
 from logger import setup_logging, get_logger
 from dotenv import load_dotenv
@@ -37,23 +37,7 @@ async def update_accounts_list():
     '''
     logger.info("Synchronizing account types from service...")
 
-    # # Create service with client and unit of work
-    # service = AccountTypeSyncService(
-    #     SynchClient(),
-    #     UnitOfWork()
-    # )
-
-    # # Call synchronization method
-    # response = service.synch()
-    
-    # # Create complete response message
-    # response_message={
-    #     "message": "Account types successfully synchronized",
-    #     "data": response
-    #     }
-    
-    # logger.info("Account types synchronized successfully.")
-    # return JSONResponse(content=response_message)
+    # Create service with client and unit of work
     service = ReferenceSyncService(
         fetch_items=lambda: SynchClient(BASE_URL, TOKEN)
             .get_codes(os.getenv("ACCOUNTS_ENDPOINT"), AccountTypeResponse)
@@ -78,24 +62,7 @@ async def update_banks_list():
     '''
     logger.info("Synchronizing bank codes from service...")
 
-    # # Create service with client and unit of work
-    # service = BankCodeSyncService(
-    #     SynchClient(),
-    #     UnitOfWork()
-    # )
-    
-    # # Call synchronization method
-    # response = service.synch()
-    
-    # # Create complete response message
-    # response_message={
-    #     "message": "Account types successfully synchronized",
-    #     "data": response
-    #     }
-    
-    # logger.info("Bank codes synchronized successfully.")
-    # return JSONResponse(content=response_message)
-
+    # Create service with client and unit of work
     service = ReferenceSyncService(
         fetch_items=lambda:SynchClient(BASE_URL, TOKEN)
             .get_codes(os.getenv("BANKS_ENDPOINT"), BankCodeResponse)
@@ -110,6 +77,70 @@ async def update_banks_list():
     return {
         "message": "Account types synchronized successfully",
         "data": service.synch()
+    }
+
+@router.post("/regions", response_class=JSONResponse)
+async def update_regions_list():
+    '''
+    Update the regions list
+    '''
+
+    logger.info("Synchronizing region codes from service...")
+
+    # Create the service with client and unit of work
+    service = ReferenceSyncService(
+        fetch_items=lambda:SynchClient(BASE_URL, TOKEN)
+            .get_codes(os.getenv("REGIONS_ENDPOINT"), RegionCodeResponse)
+            .regions,
+        uow=UnitOfWork(),
+        repository_attr="region_references",
+        orm_model=RegionORM,
+        code_field="codigo_region",
+        name_field="nombre_region"
+    )
+
+    return {
+        "message": "Region codes synchronized successfully",
+        "data": service.synch()
+    }
+
+
+@router.post("/accounts/purge", response_class=JSONResponse)
+async def purge_account_types():
+    '''
+    Delete all account types from the database
+    '''
+    service = ReferenceSyncService(
+        fetch_items=[],  # Not used here
+        uow=UnitOfWork(),
+        repository_attr="account_references",
+        orm_model=CuentaORM,
+        code_field="codigo_tipo",
+        name_field="tipo_cuenta"
+    )
+
+    return {
+        "message": "Account types purged successfully",
+        "data": service.purge()
+    }
+
+@router.post("/banks/purge", response_class=JSONResponse)
+async def purge_bank_codes():
+    '''
+    Delete all bank codes from database
+    '''
+    service = ReferenceSyncService(
+        fetch_items=[],  # Not used here
+        uow=UnitOfWork(),
+        repository_attr="bank_references",
+        orm_model=BancoORM,
+        code_field="codigo_banco",
+        name_field="nombre_banco"
+    )
+
+    return {
+        "message": "Bank codes purged successfully",
+        "data": service.purge()
     }
 
 

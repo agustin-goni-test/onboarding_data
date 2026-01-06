@@ -20,4 +20,11 @@ class BancoORM(Base):
     codigo_banco: Mapped[int] = mapped_column(nullable=False, unique=True)
 
 
+class RegionORM(Base):
+    __tablename__ = "regiones"
+    __table_args__ = {"schema": "onboarding_extras"}
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    nombre_region: Mapped[str] = mapped_column(nullable=False)
+    codigo_region: Mapped[int] = mapped_column(nullable=False, unique=True)
 

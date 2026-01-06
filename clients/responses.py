@@ -7,6 +7,10 @@ class AccountTypeDTO(BaseModel):
 
 class BankCodeDTO(BaseModel):
     code: int
+    name: str
+
+class RegionCodeDTO(BaseModel):
+    code: int
     name: str   
 
 
@@ -16,3 +20,6 @@ class AccountTypeResponse(BaseModel):
 
 class BankCodeResponse(BaseModel):
     bank_codes: List[BankCodeDTO] = Field(..., alias="banks")
+
+class RegionCodeResponse(BaseModel):
+    regions: List[BankCodeDTO] = Field(..., alias="regions")

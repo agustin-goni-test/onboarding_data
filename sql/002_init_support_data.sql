@@ -19,6 +19,12 @@ CREATE TABLE IF NOT EXISTS onboarding_extras.cuentas (
     codigo_tipo     INT NOT NULL
 
     CONSTRAINT cuentas_codigo_tipo_uk UNIQUE (codigo_tipo)
-) 
+);
+
+CREATE TABLE IF NOT EXISTS onboarding_extras.regiones (
+    id              SERIAL PRIMARY KEY,
+    nombre_region   TEXT NOT NULL,
+    codigo_region   INT NOT NULL
+);
 
 COMMIT;

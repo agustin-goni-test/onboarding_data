@@ -253,6 +253,36 @@ def send_bank_type_synch():
         logger.error(f"Error while synchronizing account types: {str(e)}")
 
 
+def synch_data_type(type: str, endpoint: str):
+    url_synch = "http://127.0.0.1:8000/onboarding-extras" + endpoint
+
+    logger.info(f"Sending account data to {url_synch}")
+
+    try:
+        response = requests.post(url_synch)
+        if response.status_code == 200:
+            logger.info(f"Row in {type} synchronized successfully: {response.json()}")
+        else:
+            logger.error(f"Failed to synchronize rows in {type}, status code: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Error while synchronizing rows in {type}: {str(e)}")
+
+
+def purge_data_type(type: str, endpoint: str):
+    url_synch = "http://127.0.0.1:8000/onboarding-extras" + endpoint
+
+    logger.info(f"Sending account data to {url_synch}")
+
+    try:
+        response = requests.post(url_synch)
+        if response.status_code == 200:
+            logger.info(f"Roww {type} purged successfully: {response.json()}")
+        else:
+            logger.error(f"Failed to purge rows in {type}, status code: {response.status_code}")
+    except Exception as e:
+        logger.error(f"Error while purging rows in {type}: {str(e)}")
+
+
 if __name__ == "__main__":
 
     # Parse arguments in the call
@@ -299,9 +329,24 @@ if __name__ == "__main__":
         help="Synchronize the account type data"
     )
 
-    bank_synch_parser = subparsers.add_parser(
+    account_purge_parser = subparsers.add_parser(
+        "account-purge",
+        help="Purge the account types table"
+    )
+
+    a_synch_parser = subparsers.add_parser(
         "bank-synch",
         help="Synchronize the bank code type data"
+    )
+
+    bank_synch_purge = subparsers.add_parser(
+        "bank-purge",
+        help="Purge the banks code table"
+    )
+
+    region_synch_parser = subparsers.add_parser(
+        "region-synch",
+        help="Synchronize region codes."
     )
     
     # Parse the parameters for registration
@@ -387,8 +432,22 @@ if __name__ == "__main__":
 
     # Else, if account type synchronization
     elif args.command == "account-synch":
-        send_account_type_synch()
+        synch_data_type("accounts", "/accounts")
         # check_service_status_extras()
 
+    # Else, if account type purge
+    elif args.command == "account-purge":
+        purge_data_type("accounts", "/accounts/purge")
+
+    # Else, if bank code synchronization
     elif args.command == "bank-synch":
-        send_bank_type_synch()
+        synch_data_type("banks", "/banks")
+
+    # Else, if bank code purge
+    elif args.command == "bank-purge":
+        purge_data_type("banks", "/banks/purge")
+        
+    # Else, if region code synchronization
+    elif args.command == "region-synch":
+        synch_data_type("regions", "/regions")
+

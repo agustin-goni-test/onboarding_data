@@ -41,7 +41,7 @@ class ReferenceSyncService:
             # 3. Point to the attribute of the UnitOfWork to use.
             #    This is a critical point, as we will get the existing codes
             #.   (that is, select records from the table)
-            repo = getattr(uow, self.repository_attr)
+            repo = getattr(uow.references, self.repository_attr)
             
             # 4. Get the existing codes in the table
             existing_codes = repo.get_existing_codes()
@@ -61,4 +61,19 @@ class ReferenceSyncService:
             "received": len(incoming),
             "inserted": len(to_insert),
             "skipped": len(incoming) - len(to_insert)
+        }
+    
+    def purge(self) -> dict:
+        '''
+        Purge all rows from a table
+        '''
+
+        with self.uow as uow:
+            repo = getattr(uow.references, self.repository_attr)
+            deleted = repo.purge()
+
+        return {
+            "purged": True,
+            "deteled_rows": deleted,
+            "table": self.repository_attr
         }
