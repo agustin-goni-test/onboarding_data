@@ -1,7 +1,7 @@
 from application.data.db import SessionLocal
 from application.data.repository import CommerceRegistrationRepository, ContactInfoRepository, CommerceContactRepository, AccountInfoRepository, CommerceAccountRepository
 from application.data.extras.repository import AccountReferenceRepository, BankReferenceRepository, ReferenceRepository
-from application.data.extras.models import CuentaORM, BancoORM, RegionORM
+from application.data.extras.models import CuentaORM, BancoORM, RegionORM, ComunaORM
 
 class UnitOfWork:
     def __init__(self):
@@ -47,4 +47,10 @@ class ReferenceRepositories:
             db_session=db_session,
             model=RegionORM,
             code_column=RegionORM.codigo_region
+        )
+
+        self.district_references = ReferenceRepository(
+            db_session=db_session,
+            model=ComunaORM,
+            code_column=ComunaORM.codigo_comuna
         )

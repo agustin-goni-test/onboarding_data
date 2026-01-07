@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 
 class AccountTypeDTO(BaseModel):
     code: int
@@ -11,7 +11,12 @@ class BankCodeDTO(BaseModel):
 
 class RegionCodeDTO(BaseModel):
     code: int
-    name: str   
+    name: str
+
+class DistrictCodeDTO(BaseModel):
+    code: int
+    name: str
+    codigo_region: Optional[int] = None
 
 
 class AccountTypeResponse(BaseModel):
@@ -22,4 +27,7 @@ class BankCodeResponse(BaseModel):
     bank_codes: List[BankCodeDTO] = Field(..., alias="banks")
 
 class RegionCodeResponse(BaseModel):
-    regions: List[BankCodeDTO] = Field(..., alias="regions")
+    regions: List[RegionCodeDTO] = Field(..., alias="regions")
+
+class DistrictCodeReponse(BaseModel):
+    districts: List[DistrictCodeDTO] = Field(..., alias="districts")

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import Column
 from typing import Generic, TypeVar
-from application.data.extras.models import CuentaORM, BancoORM
+from application.data.extras.models import CuentaORM, BancoORM, ComunaORM
 from application.domain.extra_entities import AccountReference
 
 T = TypeVar("T")
@@ -99,6 +99,25 @@ class ReferenceRepository:
         :param self: Description
         '''
         return self.db_session.query(self.model).delete()
+    
+
+class DistrictRepository:
+    def __init__(self, db_session: Session):
+        self.db_session = db_session
+
+    def get_existing_codes_for_region(self, region_code: int) -> set[int]:
+        return {
+            row[0]
+            for row in (
+                self.db_session
+                .query(ComunaORM.codigo_comuna)
+                .filter(ComunaORM.codigo_region == region_code)
+                .all()
+            )
+        }
+    
+    def bulk_insert(self, districts: list[ComunaORM]) -> None:
+        self.db_session.add_all(districts)
 
     
 

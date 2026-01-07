@@ -3,10 +3,11 @@ from fastapi.responses import JSONResponse
 from application.service.extras.services import ReferenceSyncService
 from clients.reference_clients import SynchClient
 from clients.responses import AccountTypeResponse, BankCodeResponse, RegionCodeResponse
-from application.data.extras.models import CuentaORM, BancoORM, RegionORM
+from application.data.extras.models import CuentaORM, BancoORM, RegionORM, ComunaORM
 from application.data.unit_of_work import UnitOfWork
 from logger import setup_logging, get_logger
 from dotenv import load_dotenv
+from application.service.extras.fetch_reference_data import fetch_all_districts
 import os
 
 # Set up logging
@@ -103,6 +104,31 @@ async def update_regions_list():
         "message": "Region codes synchronized successfully",
         "data": service.synch()
     }
+
+
+@router.post("/districts", response_class=JSONResponse)
+async def update_district_list():
+    '''
+    Update the districts list
+    '''
+
+    logger.info("Synchronizing district codes from service...")
+    
+    service = ReferenceSyncService(
+        fetch_items=fetch_all_districts,
+        uow=UnitOfWork(),
+        repository_attr="district_references",
+        orm_model=ComunaORM,
+        code_field="codigo_comuna",
+        name_field="nombre_comuna",
+        extra_fields=["codigo_region"]
+    )
+
+    return {
+        "message": "District codes synchronized successfully",
+        "data": service.synch()
+    }
+
 
 
 @router.post("/accounts/purge", response_class=JSONResponse)

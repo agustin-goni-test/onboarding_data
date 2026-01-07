@@ -348,6 +348,11 @@ if __name__ == "__main__":
         "region-synch",
         help="Synchronize region codes."
     )
+
+    district_synch_parser = subparsers.add_parser(
+        "district-synch",
+        help="Synchronize district code."
+    )
     
     # Parse the parameters for registration
     register_parser.add_argument("--rut", type=str, help="RUT of the commerce", required=True)
@@ -450,4 +455,7 @@ if __name__ == "__main__":
     # Else, if region code synchronization
     elif args.command == "region-synch":
         synch_data_type("regions", "/regions")
+
+    elif args.command == "district-synch":
+        synch_data_type("districts", "/districts")
 

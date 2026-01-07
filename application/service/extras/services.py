@@ -14,7 +14,8 @@ class ReferenceSyncService:
             repository_attr: str,
             orm_model: Type,
             code_field: str,
-            name_field: str
+            name_field: str,
+            extra_fields: list[str] = None # to "extend" the model for extra fields
     ):
         self.fetch_items = fetch_items
         self.uow = uow
@@ -22,20 +23,39 @@ class ReferenceSyncService:
         self.orm_model = orm_model
         self.code_field = code_field
         self.name_field = name_field
+        self.extra_fields = extra_fields or []
 
     def synch(self) -> dict:
 
         # 1. Get the items from the service (with client.get_codes())
         items = self.fetch_items()
 
-        # 2. Parse the data (determine the complete list)
-        incoming = {
-            item.code: {
+        # 2. Parse the data (determine the complete list). Add the extra fields
+        # incoming = {
+        #     item.code: {
+        #         self.code_field: item.code,
+        #         self.name_field: item.name
+        #         # MISSING: self.region_field: item.region_code
+        #     }
+        #     for item in items
+
+        incoming = {}
+
+        for item in items:
+            data = {
                 self.code_field: item.code,
                 self.name_field: item.name
             }
-            for item in items
-        }
+
+            # Process extra fields that might come
+            for field in self.extra_fields:
+
+                # Map the attribute name to the DB column name
+                if hasattr(item, field):
+                    data[field] = getattr(item, field)
+
+            incoming[item.code] = data
+
 
         with self.uow as uow:
             # 3. Point to the attribute of the UnitOfWork to use.

@@ -24,7 +24,16 @@ CREATE TABLE IF NOT EXISTS onboarding_extras.cuentas (
 CREATE TABLE IF NOT EXISTS onboarding_extras.regiones (
     id              SERIAL PRIMARY KEY,
     nombre_region   TEXT NOT NULL,
-    codigo_region   INT NOT NULL
+    codigo_region   INT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS onboarding_extras.comunas (
+    id              SERIAL PRIMARY KEY,
+    codigo_region   INT NOT NULL REFERENCES onboarding_extras.regiones(codigo_region),
+    codigo_comuna   INT NOT NULL,
+    nombre_comuna   TEXT NOT NULL,
+
+    UNIQUE(codigo_region, codigo_comuna);
 );
 
 COMMIT;
